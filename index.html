@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="zh-TW"><head>
+<meta charset="UTF-8">
+<title>福岡 4 天 3 夜 行程時間表</title>
+<style>
+  body { 
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Microsoft JhengHei", sans-serif; 
+    padding: 24px; 
+    background-color: #f1f5f9; 
+    color: #334155;
+  }
+  .table-container { 
+    max-width: 1280px; 
+    margin: 0 auto; 
+    background: #ffffff; 
+    border-radius: 12px; 
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08); 
+    overflow: hidden; 
+  }
+  .header-bar { 
+    padding: 18px 24px; 
+    background: #1e293b; 
+    color: #ffffff; 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .header-bar h2 { 
+    margin: 0; 
+    font-size: 20px; 
+    font-weight: 600; 
+    letter-spacing: 0.5px;
+  }
+  .btn-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  button { 
+    border: none; 
+    padding: 8px 16px; 
+    border-radius: 6px; 
+    cursor: pointer; 
+    font-size: 14px; 
+    font-weight: 500;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .btn-edit { background: #3b82f6; color: #ffffff; }
+  .btn-edit:hover { background: #2563eb; }
+  .btn-edit.active { background: #e11d48; }
+  .btn-save-browser { background: #10b981; color: #ffffff; }
+  .btn-save-browser:hover { background: #059669; }
+  .btn-download-html { background: #8b5cf6; color: #ffffff; }
+  .btn-download-html:hover { background: #7c3aed; }
+  .btn-export { background: #0ea5e9; color: #ffffff; }
+  .btn-export:hover { background: #0284c7; }
+  .btn-reset { background: #64748b; color: #ffffff; font-size: 12px; padding: 6px 12px; }
+  .btn-reset:hover { background: #475569; }
+  
+  .status-tip {
+    font-size: 13px;
+    color: #94a3b8;
+    margin-left: 8px;
+  }
+
+  table { width: 100%; border-collapse: collapse; text-align: left; }
+  th { 
+    background-color: #334155; 
+    color: #f8fafc; 
+    padding: 14px 16px; 
+    font-weight: 600; 
+    font-size: 14px; 
+    border: 1px solid #475569; 
+  }
+  td { 
+    padding: 12px 14px; 
+    font-size: 13px; 
+    color: #334155; 
+    border-bottom: 1px solid #e2e8f0; 
+    vertical-align: middle; 
+    line-height: 1.6; 
+  }
+  tr:nth-child(even) td { background-color: #f8fafc; }
+  tr:nth-child(odd) td { background-color: #ffffff; }
+  
+  .col-time { 
+    font-weight: 700; 
+    color: #0f172a; 
+    background-color: #e2e8f0 !important; 
+    text-align: center; 
+    width: 80px; 
+  }
+  
+  /* 編輯模式樣式提示 */
+  body.editing td {
+    outline: 1px dashed #93c5fd;
+    cursor: text;
+  }
+  body.editing td:focus {
+    outline: 2px solid #2563eb;
+    background-color: #eff6ff !important;
+  }
+
+  .tag-transit { color: #0284c7; font-weight: 600; }
+  .tag-food { background-color: #fef3c7; padding: 2px 6px; border-radius: 4px; font-weight: 500; }
+</style>
+</head>
+<body class="">
+
+<div class="table-container">
+  <div class="header-bar">
+    <div>
+      <h2>福岡 4 天 3 夜 行程時間規劃表</h2>
+    </div>
+    <div class="btn-group">
+      <span id="statusTip" class="status-tip"></span>
+      <button class="btn-edit" id="toggleEditBtn" onclick="toggleEditMode()">✏️ 啟用編輯</button>
+      <button class="btn-save-browser" onclick="saveToBrowser()">💾 儲存在瀏覽器</button>
+      <button class="btn-download-html" onclick="downloadUpdatedHTML()">📥 下載更新後的 HTML 檔</button>
+      <button class="btn-export" onclick="exportTableToExcel('itineraryTable', '福岡4天3夜行程表')">📊 匯出 Excel</button>
+      <button class="btn-reset" onclick="resetDefault()">重設預設值</button>
+    </div>
+  </div>
+
+  <table id="itineraryTable">
+    <thead>
+      <tr>
+        <th style="width: 80px; text-align: center;">時間點</th>
+        <th>Day 1（9/25 週五）<br>抵達</th>
+        <th>Day 2（9/26 週六）<br>由布院一日遊・燒肉</th>
+        <th>Day 3（9/27 週日）<br>系島海景・天神・伴手禮</th>
+        <th>Day 4（9/28 週一）<br>回家</th>
+      </tr>
+    </thead>
+    <tbody id="tableBody" contenteditable="false">
+      <tr><td class="col-time">07:30</td><td>台北桃園機場起飛（<span class="tag-transit">星宇 JX846</span>）</td><td>飯店起床、梳洗準備</td><td>飯店起床、吃早餐</td><td>整理隨身行李、準備退房</td></tr>
+      <tr><td class="col-time">08:30</td><td>（航程中）</td><td>飯店早餐或車站買</td><td>準備出門前往博多地鐵站</td><td>HOTEL FORZA 筑紫口 II 辦理退房手續</td></tr>
+      <tr><td class="col-time">08:45</td><td>（航程中）</td><td>前往博多巴士總站</td><td>步行至博多站地下鐵空港線月台</td><td>飯店門口搭計程車 福岡機場國際線(約 15 分)</td></tr>
+      <tr><td class="col-time">09:17</td><td>（航程中）</td><td><span class="tag-transit">抵達博多巴士總站 3 樓 34 號乘車處候車</span></td><td>搭乘地鐵空港線（直通 JR 筑肥線往筑前前原方向）</td><td>（前往機場路程中）</td></tr>
+      <tr><td class="col-time">09:30</td><td>（航程中）</td><td>搭乘高速巴士「由布院號」直達由布院</td><td>電車行駛中直達筑前前原站</td><td>抵達機場國際線櫃檯辦理登機與托運行李</td></tr>
+      <tr><td class="col-time">10:20</td><td><span style="background-color: rgb(255, 255, 255);">（航程中）</span></td><td>(行駛中)</td><td>抵達筑前前原站北口轉搭排班計程車</td><td>安檢通關/免稅店</td></tr>
+      <tr><td class="col-time">10:45</td><td>降落 / 辦理入境 / 領行李</td><td><span style="background-color: rgb(248, 250, 252);">(行駛中)</span></td><td>抵達二見浦夫婦岩拍白色鳥居與海邊散步</td><td>候機室等候登機</td></tr>
+      <tr><td class="col-time">11:00</td><td>（出關中）</td><td>(行駛中)</td><td>二見浦海灘漫步拍照吹海風</td><td><span class="tag-transit">中華航空 CI111 班機起飛返台</span></td></tr>
+      <tr><td class="col-time">11:30</td><td>機場搭乘免費接駁車前往 JR 肥後大津站（或直達巴士至熊本站）</td><td><span style="background-color: rgb(248, 250, 252);">(行駛中)</span></td><td>前往海邊景觀餐廳 Itoshimasabo 吃午餐與喝咖啡看海</td><td>（航程中）</td></tr>
+      <tr><td class="col-time">12:00</td><td>（搭車）</td><td><span style="background-color: rgb(255, 255, 255);">抵達由布院站出站沿湯之坪街道散步逛街</span></td><td>海景餐廳用餐看海放空</td><td>（航程中）</td></tr>
+      <tr><td class="col-time">12:30</td><td><span class="tag-transit">熊本站搭乘九州新幹線直達博多站（約 35 分）</span></td><td>(逛街)</td><td>海景餐廳休息準備前往站牌</td><td>平安降落台北桃園機場</td></tr>
+      <tr><td class="col-time">12:59</td><td>（新幹線）</td><td><span style="background-color: rgb(254, 243, 199);">湯之坪小吃（金賞可樂餅、Milch 起司蛋糕）</span></td><td>站牌搭乘【25 號昭和公車】返回筑前前原站</td><td>—</td></tr>
+      <tr><td class="col-time">13:30</td><td>抵達博多站筑紫口進 HOTEL FORZA 筑紫口 II 寄放行李</td><td>參觀沿途特色文創店與宮崎駿專賣店</td><td>公車抵達筑前前原站轉搭電車直達天神</td><td>—</td></tr>
+      <tr><td class="col-time">14:00</td><td><span class="tag-food">午餐：ShinShin 拉麵（DEITOS店）或博多一雙</span></td><td>湯之坪街道漫步挑選特色甜點</td><td>抵達「天神站」出站直接開逛天神地下街</td><td>—</td></tr>
+      <tr><td class="col-time">15:00</td><td>Yodobashi 博多店&nbsp;</td><td>抵達金鱗湖湖畔散步拍水中鳥居</td><td>&nbsp;Bic Camera 天神 2 號館 (6 樓有玩具)</td><td>—</td></tr>
+      <tr><td class="col-time">15:30</td><td>(逛街)</td><td>金鱗湖周邊咖啡館喝下午茶發呆看湖景</td><td>散步至唐吉訶德福岡天神本店</td><td>—</td></tr>
+      <tr><td class="col-time">15:56</td><td><span style="background-color: rgb(248, 250, 252);">(逛街)</span></td><td>沿路補買伴手禮點心</td><td>天神商圈服飾店與藥妝店自由採買</td><td>—</td></tr>
+      <tr><td class="col-time">16:30</td><td>走 2 分鐘回飯店放房間稍作休息</td><td>走回由布院車站，車站前拍照留念</td><td>天神商圈散步喝下午茶</td><td>—</td></tr>
+      <tr><td class="col-time">17:00</td><td>散步前往博多運河城與川端通商店街</td><td><span style="color: rgb(2, 132, 199); font-weight: 600;">搭觀光JR「由布院之森 6 號」回博多 <br>(班次17:17&nbsp; 已預約 )</span></td><td>天神搭地鐵機場線返回博多站（車程約 5 分）</td><td>—</td></tr>
+      <tr><td class="col-time">18:00</td><td>運河城看整點水舞秀與逛街</td><td>（搭車）</td><td>在博多站阪急 B1 採買名產</td><td>—</td></tr>
+      <tr><td class="col-time">18:10</td><td>運河城散步感受傍晚市區氣氛</td><td><span style="background-color: rgb(248, 250, 252);">（搭車）</span></td><td>採買完回房間放名產伴手禮</td><td>—</td></tr>
+      <tr><td class="col-time">18:30</td><td>中洲屋台街小吃或其他晚餐</td><td>（搭車） (19:30下車)</td><td>出門吃晚餐</td><td>—</td></tr>
+      <tr><td class="col-time">20:00</td><td>中洲河畔散步夜景放鬆</td><td>晚餐吃燒肉</td><td>吃飽散步回飯店</td><td>—</td></tr>
+      <tr><td class="col-time">21:30</td><td>散步回飯店若肚子餓可吃拉麵當宵夜</td><td>回飯店放鬆休息</td><td>回飯店打包行李清點戰利品</td><td>—</td></tr>
+      <tr><td class="col-time">22:00</td><td>整理 / 休息</td><td>整理 / 休息</td><td>整理行李 / 休息</td><td>—</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<script>
+let isEditing = false;
+const storageKey = 'fukuoka_itinerary_html_v2';
+
+// 載入本地快取
+window.onload = function() {
+  const savedData = localStorage.getItem(storageKey);
+  if (savedData) {
+    document.getElementById('tableBody').innerHTML = savedData;
+    showStatus('已載入先前編輯的內容');
+  }
+};
+
+// 切換編輯模式
+function toggleEditMode() {
+  isEditing = !isEditing;
+  const tbody = document.getElementById('tableBody');
+  const btn = document.getElementById('toggleEditBtn');
+  
+  if (isEditing) {
+    document.body.classList.add('editing');
+    tbody.setAttribute('contenteditable', 'true');
+    btn.innerHTML = '🔒 鎖定文字';
+    btn.classList.add('active');
+    showStatus('已進入編輯模式，點擊任一欄位即可直接打字修改');
+  } else {
+    document.body.classList.remove('editing');
+    tbody.setAttribute('contenteditable', 'false');
+    btn.innerHTML = '✏️ 啟用編輯';
+    btn.classList.remove('active');
+    showStatus('已鎖定文字');
+  }
+}
+
+// 儲存至瀏覽器
+function saveToBrowser() {
+  const tbodyHTML = document.getElementById('tableBody').innerHTML;
+  localStorage.setItem(storageKey, tbodyHTML);
+  showStatus('✅ 已成功儲存在目前瀏覽器！');
+  if (isEditing) toggleEditMode();
+}
+
+// 下載包含最新內容的完整 HTML 檔案
+function downloadUpdatedHTML() {
+  if (isEditing) toggleEditMode();
+  
+  // 取得當前整個網頁的最新 HTML 代碼
+  const cloneDoc = document.documentElement.cloneNode(true);
+  
+  // 清理狀態提示再打包
+  const statusTip = cloneDoc.querySelector('#statusTip');
+  if (statusTip) statusTip.innerText = '';
+
+  const fullHtmlContent = '<!DOCTYPE html>\n' + cloneDoc.outerHTML;
+  const blob = new Blob([fullHtmlContent], { type: 'text/html;charset=utf-8' });
+  const downloadLink = document.createElement('a');
+  
+  downloadLink.href = URL.createObjectURL(blob);
+  downloadLink.download = '福岡4天3夜行程表_最新版.html';
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+  document.body.removeChild(downloadLink);
+  URL.revokeObjectURL(downloadLink.href);
+
+  showStatus('📥 已下載最新版 HTML 檔！用記事本開就會是最新內容');
+}
+
+// 重設回原始內容
+function resetDefault() {
+  if (confirm('確定要清空修改、恢復最初預設的行程嗎？')) {
+    localStorage.removeItem(storageKey);
+    location.reload();
+  }
+}
+
+function showStatus(text) {
+  const tip = document.getElementById('statusTip');
+  tip.innerText = text;
+  setTimeout(() => {
+    if (tip.innerText === text) tip.innerText = '';
+  }, 4000);
+}
+
+// 匯出 Excel
+function exportTableToExcel(tableID, filename = ''){
+    var downloadLink;
+    var dataType = 'application/vnd.ms-excel;charset=utf-8';
+    var tableSelect = document.getElementById(tableID);
+    var tableHTML = tableSelect.outerHTML.replace(/ /g, '%20');
+    filename = filename ? filename + '.xls' : 'excel_data.xls';
+    downloadLink = document.createElement("a");
+    document.body.appendChild(downloadLink);
+    if(navigator.msSaveOrOpenBlob){
+        var blob = new Blob(['\ufeff' + tableSelect.outerHTML], { type: dataType });
+        navigator.msSaveOrOpenBlob(blob, filename);
+    }else{
+        downloadLink.href = 'data:' + dataType + ', %EF%BB%BF' + tableHTML;
+        downloadLink.download = filename;
+        downloadLink.click();
+    }
+}
+</script>
+
+</body></html>
